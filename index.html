@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>Rumbo</title>
+<style>
+:root{--bg:#f6f7fb;--sf:#fff;--tx:#0f172a;--t2:#64748b;--ln:#e2e8f0;--ac:#3b82f6;--ok:#10b981;--mal:#ef4444}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1220;--sf:#162033;--tx:#f1f5f9;--t2:#94a3b8;--ln:#27344d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,sans-serif;padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--bg)}
+h1{margin:0;font-size:20px;flex:1}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.in,select{width:100%;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--sf)}
+header select{width:auto;max-width:45vw}
+.ib{width:36px;height:36px;border-radius:50%;font-size:18px;flex:none}
+.ib:hover{background:var(--ln)}
+.pri{background:var(--ac);color:#fff;border-radius:10px;padding:10px 16px;font-weight:600}
+#nuevo{display:flex;gap:8px;padding:0 12px 8px;max-width:760px;margin:auto}
+main{max-width:760px;margin:auto;padding:0 12px}
+.fila{display:flex;align-items:center;gap:8px;padding:8px 4px}
+.chk{flex:none;width:28px;height:28px;border:2px solid var(--t2);border-radius:50%;font-size:14px;color:#fff;display:grid;place-items:center}
+.hecha .chk{background:var(--ok);border-color:var(--ok)}
+.hecha .tit{text-decoration:line-through;color:var(--t2)}
+.bloq{opacity:.6}
+.cuerpo{flex:1;min-width:0;cursor:pointer}
+.tit{overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:1px 8px;border-radius:99px;background:var(--ln);color:var(--t2)}
+.chip.mal{background:#ef444433;color:var(--mal)}
+.chip button{font-size:14px;line-height:1;padding:0 0 0 2px}
+.card,.sig{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:6px 10px;margin:10px 0}
+.sig{border:2px solid var(--ac)}
+small,summary{color:var(--t2)}
+details{margin:10px 0}
+.barra{height:6px;background:var(--ln);border-radius:9px;overflow:hidden;margin:2px 4px}
+.barra i{display:block;height:100%;background:var(--ok)}
+.sub{margin-left:calc(var(--n)*16px);border-left:2px solid var(--ln);padding-left:6px}
+.vacio{text-align:center;color:var(--t2);padding:32px 16px}
+h2{font-size:13px;color:var(--t2);margin:16px 4px 4px;text-transform:uppercase;letter-spacing:.04em}
+.mb{display:block;width:100%;text-align:left;padding:12px;border-radius:10px}
+.mb:hover{background:var(--ln)}
+[data-a=crear],[data-a=more]{color:var(--ac);font-weight:600}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--sf);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;padding:8px 0;display:flex;flex-direction:column;align-items:center;font-size:12px;color:var(--t2)}
+nav button.on{color:var(--ac);font-weight:600}
+nav span{font-size:20px}
+#aviso{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:#1e293b;color:#fff;padding:10px 14px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:92vw}
+#aviso.v{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#aviso button{color:#93c5fd;font-weight:700;margin-left:8px}
+dialog{width:min(540px,94vw);max-height:90vh;border:0;border-radius:16px;background:var(--sf);color:var(--tx);padding:16px}
+dialog::backdrop{background:#0008}
+dialog label,dialog b{display:block;font-size:13px;color:var(--t2);margin:10px 0 4px}
+dialog .in{margin-bottom:4px}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acc{display:flex;justify-content:space-between;margin-top:14px}
+.peligro{color:var(--mal);padding:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.mapa{overflow:auto;background:var(--sf);border:1px solid var(--ln);border-radius:14px;margin-top:8px;max-height:68vh}
+.mn{cursor:pointer}
+.mn rect{fill:var(--sf);stroke:var(--ln);stroke-width:1.5}
+.mn.ok rect{fill:#10b98133;stroke:var(--ok)}
+.mn.act rect{stroke:var(--ac);stroke-width:2.5}
+.mn.bl{opacity:.55}
+.mn text{fill:var(--tx);font-size:13px}
+.mapa path{fill:none;stroke:var(--t2);stroke-width:1.5;opacity:.6}
+</style></head>
+<body>
+<header><h1>Rumbo</h1><select id="proy" aria-label="Proyecto" hidden></select><button class="ib" data-a="menu" aria-label="Menú">⋯</button></header>
+<form id="nuevo"><input id="nuevo-in" class="in" placeholder="Buscar o crear… (Enter crea)" autocomplete="off" enterkeyhint="done"><button class="pri" aria-label="Crear">＋</button></form>
+<main id="vista"></main>
+<nav><button data-v="ahora"><span>🎯</span>Ahora</button><button data-v="obj"><span>🌳</span>Objetivos</button><button data-v="mapa"><span>🗺️</span>Mapa</button></nav>
+<div id="aviso"></div>
+
+<dialog id="ed">
+ <input id="e-t" class="in" placeholder="Título" style="font-weight:700">
+ <textarea id="e-n" class="in" rows="3" placeholder="Notas"></textarea>
+ <div class="dos">
+  <label>Prioridad<select id="e-p"><option value="0">Baja</option><option value="1">Media</option><option value="2">Alta</option></select></label>
+  <label>Fecha límite<input id="e-f" class="in" type="date"></label>
+ </div>
+ <label>Proyecto<input id="e-g" class="in" list="dl-g" autocomplete="off"></label>
+ <b>Requiere antes (pasos previos)</b><div id="e-r" class="chips"></div>
+ <input id="e-ra" class="in" list="dl-t" placeholder="Agregar paso previo (existente o nuevo)…" autocomplete="off">
+ <b>Es paso previo de</b><div id="e-pa" class="chips"></div>
+ <input id="e-pa-in" class="in" list="dl-t" placeholder="Vincular a un objetivo…" autocomplete="off">
+ <div class="acc"><button class="peligro" data-a="del">Eliminar</button><button class="mb" style="width:auto" data-a="mapaEd">🗺️ Ver mapa</button><button class="pri" data-a="cerrar">Listo</button></div>
+</dialog>
+<dialog id="menu">
+ <button class="mb" data-a="exp">⬇️ Exportar respaldo (.json)</button>
+ <button class="mb" data-a="imp">⬆️ Importar respaldo (Rumbo o mapa anterior)</button>
+ <button class="mb" data-a="lista">📋 Pegar lista (la sangría = pasos previos)</button>
+ <button class="mb" data-a="cerrar-m">Cerrar</button>
+ <small id="info"></small>
+</dialog>
+<dialog id="lst">
+ <label>Una tarea por línea. Las líneas con sangría (espacios) son pasos previos de la línea de arriba.</label>
+ <textarea id="lst-t" class="in" rows="10" placeholder="Mudarme&#10;  Buscar departamento&#10;    Definir presupuesto&#10;  Contratar flete"></textarea>
+ <div class="acc"><button class="peligro" data-a="cerrar-l" style="color:var(--t2)">Cancelar</button><button class="pri" data-a="lst-ok">Crear</button></div>
+</dialog>
+<datalist id="dl-t"></datalist><datalist id="dl-g"></datalist>
+<input type="file" id="arch" accept=".json,application/json" hidden>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=a=>(Array.isArray(a)?a:[]).filter(x=>x&&x.id&&typeof x.t==='string').map(x=>({id:String(x.id),t:x.t,n:x.n||'',d:x.d||0,p:[0,1,2].includes(x.p)?x.p:1,f:x.f||'',g:x.g||'',r:(Array.isArray(x.r)?x.r.map(String):[]).filter(i=>i!==String(x.id))}));
+let T=[],M=new Map(),P=new Map(),vista='ahora',F='',Q='',addTo=null,abierto=null,mapaRaiz=null,lim={a:40,o:30},ab={bl:0,co:0},tog=new Set(),pila=[],tAv,tGd;
+try{T=norm(JSON.parse(localStorage.getItem('rumbo1')))}catch(_){}
+const hoy=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dias=f=>Math.round((new Date(f+'T00:00')-new Date(hoy()+'T00:00'))/864e5);
+const fmt=f=>new Date(f+'T00:00').toLocaleDateString('es',{day:'numeric',month:'short'});
+const nid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- modelo: x.r = ids de los pasos previos que x necesita ---------- */
+function idx(){M=new Map(T.map(x=>[x.id,x]));P=new Map();T.forEach(x=>x.r.forEach(i=>{if(M.has(i))(P.get(i)||P.set(i,[]).get(i)).push(x)}))}
+const req=x=>x.r.map(i=>M.get(i)).filter(Boolean),pad=x=>P.get(x.id)||[],bloq=x=>req(x).some(d=>!d.d),ok=x=>!F||x.g===F;
+function cierre(x,f){const s=new Map(),p=[x];while(p.length)for(const q of f(p.pop()))if(!s.has(q.id)){s.set(q.id,q);p.push(q)}return[...s.values()]}
+const ancest=x=>cierre(x,pad),desc=x=>cierre(x,req);
+function alcanza(a,b){const v=new Set(),p=[a];while(p.length){const x=p.pop();if(x===b)return true;if(v.has(x.id))continue;v.add(x.id);req(x).forEach(d=>p.push(d))}return false}
+function puntaje(x){let f=x.d?'':x.f;const an=ancest(x).filter(a=>!a.d);an.forEach(a=>{if(a.f&&(!f||a.f<f))f=a.f});const n=f?dias(f):99;
+ return x.p*2+(n<0?7:n===0?6:n<=3?4:n<=7?2.5:n<=30?1:0)+Math.min(an.length,5)*.6}
+function crear(t,p={}){const x={id:nid(),t,n:'',d:0,p:1,f:'',r:[],g:'',...p};T.push(x);M.set(x.id,x);return x}
+
+/* ---------- guardado y deshacer ---------- */
+function guardar(){try{localStorage.setItem('rumbo1',JSON.stringify(T))}catch(_){aviso('⚠ No se pudo guardar: almacenamiento lleno')}}
+const guardarDeb=()=>{clearTimeout(tGd);tGd=setTimeout(guardar,400)};
+function cambio(fn){pila.push(JSON.stringify(T));if(pila.length>10)pila.shift();fn();guardar();pintar()}
+function undo(){const s=pila.pop();if(!s)return;T=JSON.parse(s);guardar();if($('#ed').open&&!T.some(x=>x.id===abierto))$('#ed').close();pintar();chipsEd()}
+function aviso(m,u){const a=$('#aviso');a.innerHTML=e(m)+(u?'<button data-a="undo">Deshacer</button>':'');a.classList.add('v');clearTimeout(tAv);tAv=setTimeout(()=>a.classList.remove('v'),5000)}
+function completar(x){
+ if(!x.d&&bloq(x))return aviso('Primero: '+req(x).find(d=>!d.d).t);
+ cambio(()=>{x.d=x.d?0:Date.now()});
+ if(x.d){const l=pad(x).filter(p=>!p.d&&!bloq(p));aviso(l.length?'🔓 Ahora puedes: '+l.slice(0,2).map(p=>p.t).join(', '):'✓ Completada',1)}else aviso('Reabierta',1)}
+
+/* ---------- vistas ---------- */
+const abre=id=>(T.length<=60)!==tog.has(id);
+const ancMeta=x=>{const a=ancest(x).find(p=>!p.d&&!pad(p).length);return a?`<span class="chip">→ ${e(a.t)}</span>`:''};
+const more=(n,k)=>`<button class="mb" data-a="more" data-k="${k}">Mostrar más (${n})</button>`;
+function fila(x,o={}){const b=!x.d&&bloq(x),n=x.f?dias(x.f):0;
+ return `<div class="fila${x.d?' hecha':''}${b?' bloq':''}"><button class="chk" data-a="chk" data-id="${x.id}" aria-label="Completar">${x.d?'✓':b?'🔒':''}</button><div class="cuerpo" data-a="ed" data-id="${x.id}"><div class="tit">${e(x.t)}</div><div class="meta">${x.p==2?'<span class="chip mal">Alta</span>':''}${x.f?`<span class="chip${!x.d&&n<0?' mal':''}">📅 ${fmt(x.f)}</span>`:''}${x.g&&!F?`<span class="chip">${e(x.g)}</span>`:''}${o.m?ancMeta(x):''}${o.w&&b?`<span class="chip">espera: ${e(req(x).find(d=>!d.d).t)}</span>`:''}</div></div>${o.t&&x.r.length?`<button class="ib" data-a="tog" data-id="${x.id}" aria-label="Plegar o desplegar">${abre(x.id)?'▾':'▸'}</button>`:''}${o.map&&x.r.length?`<button class="ib" data-a="mapa" data-id="${x.id}" aria-label="Ver mapa">🗺️</button>`:''}${o.mas?`<button class="ib" data-a="mas" data-id="${x.id}" aria-label="Agregar paso previo">＋</button>`:''}</div>`}
+const vacio='<div class="vacio"><p>Escribe arriba tu primer objetivo y ábrelo (toca el título) para agregarle <b>pasos previos</b>.</p><p>En <b>Ahora</b> verás solo lo que ya puedes hacer.</p><small>¿Tienes datos del mapa anterior? Menú ⋯ → Importar. ¿Una lista larga? Menú ⋯ → Pegar lista.</small></div>';
+
+function vAhora(){
+ if(!T.length)return vacio;
+ const act=T.filter(x=>ok(x)&&!x.d&&!bloq(x)).map(x=>[x,puntaje(x)]).sort((a,b)=>b[1]-a[1]).map(a=>a[0]);
+ const bl=T.filter(x=>ok(x)&&!x.d&&bloq(x)),hh=new Date().toDateString(),hn=T.filter(x=>ok(x)&&x.d&&new Date(x.d).toDateString()===hh).length;
+ let h=act.length?`<div class="sig"><small>Siguiente paso recomendado</small>${fila(act[0],{m:1})}</div>`:'<div class="vacio">Nada disponible por ahora 🎉<br>Todo está hecho o esperando pasos previos.</div>';
+ if(act.length>1)h+=`<h2>Disponibles (${act.length-1})</h2>`+act.slice(1,lim.a).map(x=>fila(x,{m:1})).join('')+(act.length>lim.a?more(act.length-lim.a,'a'):'');
+ if(bl.length)h+=`<details data-k="bl"${ab.bl?' open':''}><summary>Bloqueadas (${bl.length})</summary>${bl.slice(0,30).map(x=>fila(x,{w:1,m:1})).join('')}${bl.length>30?`<small>y ${bl.length-30} más</small>`:''}</details>`;
+ return h+(hn?`<p class="vacio">✔ ${hn} completadas hoy</p>`:'')}
+
+function arbol(x,n,v){
+ let h=addTo===x.id?`<div class="sub" style="--n:${n}"><input id="add-in" class="in" data-p="${x.id}" placeholder="Paso previo de «${e(x.t.slice(0,30))}»… Enter" autocomplete="off" enterkeyhint="done"></div>`:'';
+ for(const d of req(x)){const sv=`<div class="sub" style="--n:${n}">`;
+  if(v.has(d.id)){h+=sv+`<small>↺ ${e(d.t)} (ciclo)</small></div>`;continue}
+  h+=sv+fila(d,{t:1,mas:1})+'</div>';
+  if(abre(d.id)||addTo===d.id)h+=arbol(d,n+1,new Set([...v,d.id]))}
+ return h}
+function card(r){const ds=desc(r),dn=ds.filter(d=>d.d).length;
+ return `<section class="card">${fila(r,{t:1,mas:1,map:1})}${ds.length?`<div class="barra"><i style="width:${dn/ds.length*100}%"></i></div><small>${dn}/${ds.length} pasos previos hechos</small>`:''}${abre(r.id)||addTo===r.id?arbol(r,1,new Set([r.id])):''}</section>`}
+function vObj(){
+ const rs=T.filter(x=>ok(x)&&!pad(x).length);if(!rs.length)return vacio;
+ const a=rs.filter(x=>!x.d).map(x=>[x,puntaje(x)]).sort((p,q)=>q[1]-p[1]).map(p=>p[0]),f=rs.filter(x=>x.d);
+ return a.slice(0,lim.o).map(card).join('')+(a.length>lim.o?more(a.length-lim.o,'o'):'')+(f.length?`<details data-k="co"${ab.co?' open':''}><summary>Completados (${f.length})</summary>${f.slice(0,30).map(card).join('')}</details>`:'')}
+
+function vMapa(){
+ const rs=T.filter(x=>ok(x)&&!pad(x).length&&x.r.length&&!x.d);
+ const r=(mapaRaiz&&M.get(mapaRaiz))||rs[0];
+ if(!r)return '<div class="vacio">El mapa muestra un objetivo con todos sus pasos previos.<br>Agrega pasos previos a un objetivo para verlo aquí.</div>';
+ const sel=`<select id="msel" style="width:100%">${[r,...rs.filter(x=>x!==r)].slice(0,300).map(x=>`<option value="${x.id}"${x===r?' selected':''}>${e(x.t.slice(0,60))}</option>`).join('')}</select>`;
+ const nodos=[r,...desc(r)],set=new Set(nodos.map(x=>x.id)),max=nodos.length>400?2:99,L=new Map(),pos=new Map(),col=[];
+ const lv=(x,vs=new Set())=>{if(L.has(x.id))return L.get(x.id);if(x===r||vs.has(x.id))return 0;vs.add(x.id);const ps=pad(x).filter(p=>set.has(p.id)),n=ps.length?Math.max(...ps.map(p=>lv(p,vs)))+1:0;L.set(x.id,n);return n};
+ const vi=x=>{if(pos.has(x.id))return;const l=lv(x);if(l>max)return;const c=col[l]||0;col[l]=c+1;pos.set(x.id,[10+c*170,10+l*84]);req(x).forEach(vi)};vi(r);
+ const W=Math.max(...[...pos.values()].map(p=>p[0]))+170,H=col.length*84+20;let ln='',g='';
+ for(const x of nodos){const a=pos.get(x.id);if(!a)continue;
+  for(const d of req(x)){const b=pos.get(d.id);if(b){const x1=a[0]+75,y1=a[1]+44,x2=b[0]+75,y2=b[1];ln+=`<path d="M${x1} ${y1}C${x1} ${y1+30} ${x2} ${y2-30} ${x2} ${y2}"/>`}}
+  g+=`<g class="mn ${x.d?'ok':bloq(x)?'bl':'act'}" data-a="ed" data-id="${x.id}"><rect x="${a[0]}" y="${a[1]}" width="150" height="44" rx="10"/><text x="${a[0]+10}" y="${a[1]+26}">${e(x.t.length>20?x.t.slice(0,19)+'…':x.t)}</text></g>`}
+ return sel+`<div class="mapa"><svg width="${W}" height="${H}">${ln}${g}</svg></div><small style="display:block;padding:8px">Verde: hecha · Azul: lista para hacer · Gris: bloqueada${max<99?' · Muy grande: se muestran 3 niveles; abre un paso y toca «Ver mapa»':''}</small>`}
+
+function vBusca(){const q=Q.toLowerCase(),r=T.filter(x=>x.t.toLowerCase().includes(q));
+ return `<button class="mb" data-a="crear">＋ Crear «${e(Q)}»</button>`+(r.length?`<h2>${r.length} coincidencias</h2>`+r.slice(0,50).map(x=>fila(x,{m:1,w:1})).join(''):'<p class="vacio">Sin coincidencias</p>')}
+
+function pintar(){idx();const y=scrollY,gs=[...new Set(T.map(x=>x.g).filter(Boolean))].sort();
+ if(F&&!gs.includes(F))F='';
+ $('#proy').innerHTML='<option value="">Todos los proyectos</option>'+gs.map(g=>`<option value="${e(g)}"${g===F?' selected':''}>${e(g)}</option>`).join('');$('#proy').hidden=!gs.length;
+ $('#dl-g').innerHTML=gs.map(g=>`<option value="${e(g)}">`).join('');
+ $$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===vista&&!Q));
+ $('#vista').innerHTML=Q?vBusca():vista=='ahora'?vAhora():vista=='obj'?vObj():vMapa();
+ scrollTo(0,y);const i=$('#add-in');if(i)i.focus()}
+
+/* ---------- editor ---------- */
+function abrirEd(id){const x=M.get(id);if(!x)return;abierto=id;$('#e-t').value=x.t;$('#e-n').value=x.n;$('#e-p').value=x.p;$('#e-f').value=x.f;$('#e-g').value=x.g;$('#e-ra').value=$('#e-pa-in').value='';chipsEd();$('#ed').showModal()}
+function chipsEd(){const x=M.get(abierto);if(!x)return;idx();
+ const c=(t,a,i)=>`<span class="chip">${e(t)}<button data-a="${a}" data-id="${i}" aria-label="Quitar">×</button></span>`;
+ $('#e-r').innerHTML=req(x).map(d=>c(d.t,'qr',d.id)).join('')||'<small>Ninguno</small>';
+ $('#e-pa').innerHTML=pad(x).map(p=>c(p.t,'qp',p.id)).join('')||'<small>Ninguno: es un objetivo</small>'}
+function vincular(x,txt,comoPadre){let o=T.find(y=>y!==x&&y.t===txt),ciclo=false;
+ cambio(()=>{if(!o)o=crear(txt,{g:x.g});const[pa,hi]=comoPadre?[o,x]:[x,o];if(alcanza(hi,pa)){ciclo=true;return}if(!pa.r.includes(hi.id))pa.r.push(hi.id)});
+ if(ciclo)aviso('Eso crearía un ciclo: A necesitaría a B y B a A');chipsEd()}
+$('#ed').addEventListener('input',ev=>{const x=M.get(abierto);if(!x)return;const i=ev.target.id,v=ev.target.value;
+ if(i=='e-t')x.t=v;else if(i=='e-n')x.n=v;else if(i=='e-p')x.p=+v;else if(i=='e-f')x.f=v;else if(i=='e-g')x.g=v.trim();
+ else if(i=='e-ra'||i=='e-pa-in'){const q=v.toLowerCase();$('#dl-t').innerHTML=v.length<2?'':T.filter(y=>y!==x&&y.t.toLowerCase().includes(q)).slice(0,40).map(y=>`<option value="${e(y.t)}">`).join('')}
+ guardarDeb()});
+['e-ra','e-pa-in'].forEach(id=>{const el=$('#'+id),f=()=>{const x=M.get(abierto),v=el.value.trim();if(x&&v){el.value='';vincular(x,v,id=='e-pa-in')}};
+ el.addEventListener('change',f);el.addEventListener('keydown',ev=>{if(ev.key=='Enter'){ev.preventDefault();f()}})});
+$('#ed').addEventListener('close',()=>{const x=M.get(abierto);if(x&&!x.t.trim())x.t='Sin título';abierto=null;guardar();pintar()});
+
+/* ---------- respaldo, importación y listas ---------- */
+function exportar(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({rumbo:1,tareas:T})],{type:'application/json'}));a.download='rumbo-respaldo-'+hoy()+'.json';document.body.appendChild(a);a.click();a.remove();try{localStorage.setItem('rumbo_bk',Date.now())}catch(_){}aviso('Respaldo descargado')}
+function importar(txt){let d,n=[];try{d=JSON.parse(txt)}catch(_){return aviso('Archivo inválido')}
+ if(d&&Array.isArray(d.tareas))n=norm(d.tareas);
+ else if(d&&Object.keys(d).some(k=>k.startsWith('mapaDatos_')))for(const k in d){if(!k.startsWith('mapaDatos_'))continue;let m;try{m=JSON.parse(d[k])}catch(_){continue}
+  const g=k.slice(10),pre=g+':',ids=new Set((m.nodos||[]).map(o=>pre+o.id));
+  (m.nodos||[]).forEach(o=>n.push({id:pre+o.id,t:o.texto||'Sin título',d:o.completado?Date.now():0,g,r:[]}));
+  (m.enlaces||[]).forEach(l=>{const p=n.find(z=>z.id===pre+l.padreId);if(p&&ids.has(pre+l.hijoId))p.r.push(pre+l.hijoId)});
+  (m.bandeja||[]).forEach((t,i)=>n.push({id:pre+'b'+i,t,g,r:[]}))}
+ else return aviso('No reconozco ese archivo');
+ n=norm(n);if(!n.length)return aviso('El archivo no tiene tareas');
+ cambio(()=>{n.forEach(x=>{const i=T.findIndex(y=>y.id===x.id);i>=0?T[i]=x:T.push(x)});idx();
+  T.forEach(x=>{const r=x.r;x.r=[];r.forEach(i=>{const y=M.get(i);if(y&&y!==x&&!alcanza(y,x))x.r.push(i)})})});
+ aviso(n.length+' tareas importadas',1)}
+function pegar(txt){const st=[];let n=0;
+ cambio(()=>txt.split('\n').forEach(l=>{if(!l.trim())return;const ind=l.match(/^[ \t]*/)[0].replace(/\t/g,'  ').length,x=crear(l.trim().replace(/^[-*•]\s*/,''),{g:F});
+  while(st.length&&st[st.length-1][0]>=ind)st.pop();if(st.length)st[st.length-1][1].r.push(x.id);st.push([ind,x]);n++}));
+ aviso(n+' tareas creadas',1)}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id,x=M.get(id);
+ if(a=='chk'&&x)completar(x);
+ else if(a=='ed'&&x)abrirEd(id);
+ else if(a=='mas'){addTo=addTo===id?null:id;pintar()}
+ else if(a=='tog'){tog.has(id)?tog.delete(id):tog.add(id);pintar()}
+ else if(a=='more'){lim[b.dataset.k]+=40;pintar()}
+ else if(a=='mapa'||a=='mapaEd'){mapaRaiz=a=='mapa'?id:abierto;vista='mapa';Q='';$('#nuevo-in').value='';a=='mapaEd'?$('#ed').close():pintar();scrollTo(0,0)}
+ else if(a=='qr'){const t=M.get(abierto);if(t){cambio(()=>{t.r=t.r.filter(i=>i!==id)});chipsEd()}}
+ else if(a=='qp'&&x){cambio(()=>{x.r=x.r.filter(i=>i!==abierto)});chipsEd()}
+ else if(a=='del'){const i=abierto;cambio(()=>{T=T.filter(y=>y.id!==i);T.forEach(y=>y.r=y.r.filter(j=>j!==i))});$('#ed').close();aviso('Tarea eliminada',1)}
+ else if(a=='undo'){undo();$('#aviso').classList.remove('v')}
+ else if(a=='crear')$('#nuevo').requestSubmit();
+ else if(a=='cerrar')$('#ed').close();
+ else if(a=='menu'){const bk=+localStorage.getItem('rumbo_bk');$('#info').textContent=T.length+' tareas en este dispositivo · último respaldo: '+(bk?new Date(bk).toLocaleDateString('es'):'nunca');$('#menu').showModal()}
+ else if(a=='cerrar-m')$('#menu').close();
+ else if(a=='exp'){exportar();$('#menu').close()}
+ else if(a=='imp'){$('#menu').close();$('#arch').click()}
+ else if(a=='lista'){$('#menu').close();$('#lst').showModal()}
+ else if(a=='cerrar-l')$('#lst').close();
+ else if(a=='lst-ok'){pegar($('#lst-t').value);$('#lst-t').value='';$('#lst').close()}});
+document.addEventListener('change',ev=>{const i=ev.target.id;if(i=='msel'){mapaRaiz=ev.target.value;pintar()}else if(i=='proy'){F=ev.target.value;pintar()}});
+document.addEventListener('toggle',ev=>{const k=ev.target.dataset&&ev.target.dataset.k;if(k)ab[k]=ev.target.open},true);
+document.addEventListener('keydown',ev=>{const i=ev.target;
+ if(i.id=='add-in'){if(ev.key=='Enter'&&i.value.trim()){const p=M.get(i.dataset.p),t=i.value.trim();cambio(()=>{p.r.push(crear(t,{g:p.g}).id)})}else if(ev.key=='Escape'){addTo=null;pintar()}}
+ else if(ev.key=='/'&&!/INPUT|TEXTAREA|SELECT/.test(i.tagName||'')&&!$('dialog[open]')){ev.preventDefault();$('#nuevo-in').focus()}});
+$('nav').onclick=ev=>{const b=ev.target.closest('button');if(!b)return;vista=b.dataset.v;Q='';$('#nuevo-in').value='';addTo=null;pintar();scrollTo(0,0)};
+$('#nuevo-in').oninput=ev=>{Q=ev.target.value.trim();lim.a=40;pintar()};
+$('#nuevo').onsubmit=ev=>{ev.preventDefault();const i=$('#nuevo-in'),t=i.value.trim();if(!t)return;i.value='';Q='';cambio(()=>crear(t,{g:F}))};
+$('#arch').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>importar(r.result);r.readAsText(f);ev.target.value=''};
+addEventListener('storage',ev=>{if(ev.key=='rumbo1'){try{T=norm(JSON.parse(ev.newValue));pintar()}catch(_){}}});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
+navigator.storage?.persist?.();
+pintar();
+{const bk=+localStorage.getItem('rumbo_bk')||0;if(T.length>8&&Date.now()-bk>14*864e5)setTimeout(()=>aviso('Haz un respaldo: menú ⋯ → Exportar'),1500)}
+</script>
+</body></html>
